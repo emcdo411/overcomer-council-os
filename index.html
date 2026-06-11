@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Overcomer Council OS | The Waiting Was the Cage</title>
+<meta name="description" content="A strategic adversity-to-leverage prompt engine for builders who stopped waiting for permission." />
+<style>
+  :root {
+    --ink: #111827;
+    --muted: #5b6677;
+    --soft: #f5f7fb;
+    --paper: #ffffff;
+    --line: #d8dee8;
+    --line-strong: #aab4c3;
+    --accent: #6f83c9;
+    --accent-dark: #384a91;
+    --success: #16785f;
+    --warn: #9a5b00;
+    --shadow: 0 18px 50px rgba(17, 24, 39, .08);
+    --radius: 18px;
+    --radius-sm: 12px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at top left, rgba(111,131,201,.18), transparent 34rem),
+      linear-gradient(180deg, #fbfcff 0%, #f1f4fa 100%);
+  }
+  button, input, textarea, select { font: inherit; }
+  button { color: inherit; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+  .root { max-width: 1240px; margin: 0 auto; padding: 28px 18px 48px; }
+  .topbar { display:flex; justify-content:space-between; align-items:center; gap: 12px; margin-bottom: 16px; }
+  .brand { display:flex; align-items:center; gap:10px; font-weight: 850; letter-spacing: -.02em; }
+  .brand-mark { width: 34px; height: 34px; border-radius: 11px; background: linear-gradient(135deg, var(--ink), var(--accent)); color:white; display:grid; place-items:center; box-shadow: var(--shadow); }
+  .mode-pill { border:1px solid var(--line); background:rgba(255,255,255,.72); padding:7px 10px; border-radius:999px; font-size:12px; color:var(--muted); }
+  .hero { background: rgba(255,255,255,.78); border:1px solid var(--line); border-radius: calc(var(--radius) + 8px); padding: clamp(22px, 4vw, 44px); box-shadow: var(--shadow); overflow:hidden; position:relative; }
+  .hero:after { content:""; position:absolute; inset:auto -80px -160px auto; width:320px; height:320px; border-radius:50%; background:rgba(111,131,201,.16); }
+  .kicker { color: var(--accent-dark); text-transform: uppercase; letter-spacing: .12em; font-size: 12px; font-weight: 800; margin: 0 0 10px; }
+  .title { font-size: clamp(38px, 7vw, 82px); line-height: .9; letter-spacing: -.065em; margin: 0; max-width: 920px; }
+  .subtitle { max-width: 850px; color: var(--muted); font-size: clamp(15px, 1.7vw, 19px); line-height: 1.62; margin: 18px 0 0; }
+  .hero-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top: 22px; position:relative; z-index:1; }
+  .btn { border:1px solid var(--line); background: var(--paper); border-radius: 999px; padding: 10px 14px; cursor:pointer; font-weight: 750; font-size: 13px; transition: .18s ease; }
+  .btn:hover { transform: translateY(-1px); border-color: var(--line-strong); box-shadow: 0 8px 20px rgba(17,24,39,.08); }
+  .btn.primary { background: var(--ink); color:white; border-color: var(--ink); }
+  .btn.accent { background: var(--accent); color:white; border-color: var(--accent); }
+  .method-strip { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 14px 0; }
+  .metric { background: rgba(255,255,255,.75); border:1px solid var(--line); border-radius: var(--radius-sm); padding: 13px; }
+  .metric b { display:block; font-size: 13px; margin-bottom:4px; }
+  .metric span { display:block; color:var(--muted); font-size: 12px; line-height:1.45; }
+  .layout { display:grid; grid-template-columns: minmax(280px, 410px) 1fr; gap: 16px; align-items:start; margin-top: 16px; }
+  .card { background: rgba(255,255,255,.82); border:1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .card-pad { padding: 16px; }
+  .section-title { margin: 0 0 12px; font-size: 15px; font-weight: 850; letter-spacing:-.01em; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .subtle { color:var(--muted); font-size:12px; font-weight:500; }
+  .filters { display:flex; flex-wrap:wrap; gap:7px; margin-bottom: 12px; }
+  .chip { border:1px solid var(--line); background:var(--paper); border-radius:999px; padding:7px 10px; cursor:pointer; font-size:12px; color:var(--muted); }
+  .chip.active { color:white; background:var(--accent-dark); border-color:var(--accent-dark); }
+  .panel-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .member-card { border:1px solid var(--line); background:var(--paper); border-radius: 15px; padding:12px; text-align:left; cursor:pointer; min-height:132px; transition:.18s ease; position:relative; }
+  .member-card:hover { transform: translateY(-2px); border-color: var(--line-strong); box-shadow:0 10px 24px rgba(17,24,39,.08); }
+  .member-card.active { outline:3px solid rgba(111,131,201,.22); border-color:var(--accent); }
+  .member-card.compare { border-color: var(--success); outline: 3px solid rgba(22,120,95,.12); }
+  .member-top { display:flex; justify-content:space-between; gap:8px; align-items:flex-start; }
+  .member-avatar { width: 42px; height: 42px; border-radius: 15px; display:grid; place-items:center; font-weight: 900; font-size:14px; margin-bottom:10px; }
+  .member-name { font-weight: 850; font-size:13px; line-height:1.25; }
+  .member-tag { color:var(--muted); font-size:11px; line-height:1.35; margin-top:4px; }
+  .member-lens { margin-top:9px; padding-top:8px; border-top:1px solid var(--line); color:var(--muted); font-size:11px; line-height:1.35; }
+  .compare-check { width:20px; height:20px; border:1px solid var(--line); border-radius:6px; display:grid; place-items:center; font-size:12px; color:var(--success); }
+  .compare .compare-check::before { content:"✓"; }
+  .workbench { display:grid; gap: 12px; }
+  .ask-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .q-btn { border:1px solid var(--line); background:var(--paper); border-radius: 12px; padding: 10px; text-align:left; cursor:pointer; font-size:12px; line-height:1.35; color: var(--ink); }
+  .q-btn:hover { border-color:var(--accent); }
+  .custom-row { display:grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 10px; }
+  .input { width:100%; border:1px solid var(--line); border-radius: 13px; padding: 11px 12px; background:var(--paper); color:var(--ink); }
+  .input:focus, textarea:focus, select:focus { outline: 3px solid rgba(111,131,201,.18); border-color:var(--accent); }
+  .toolbar { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap:8px; margin-top: 10px; }
+  .answer-grid { display:grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap:8px; }
+  .output-card { border:1px solid var(--line); background:var(--paper); border-radius: 14px; padding: 12px; min-height: 114px; }
+  .output-card b { display:block; font-size:12px; margin-bottom:6px; }
+  .output-card span { color:var(--muted); font-size:12px; line-height:1.45; }
+  .prompt-box { width:100%; min-height:220px; resize:vertical; border:1px solid var(--line); border-radius: 15px; padding: 12px; background: #fbfcff; color:var(--ink); font-size:12px; line-height:1.5; }
+  .history-list { display:grid; gap:8px; max-height: 260px; overflow:auto; padding-right:4px; }
+  .history-item { border:1px solid var(--line); background:var(--paper); border-radius: 12px; padding:10px; cursor:pointer; }
+  .history-item b { display:block; font-size:12px; margin-bottom:4px; }
+  .history-item span { color:var(--muted); font-size:11px; line-height:1.35; }
+  .notice { border-left:4px solid var(--accent); background:rgba(111,131,201,.08); padding:12px 14px; border-radius: 12px; color:var(--muted); font-size:12px; line-height:1.55; }
+  .toast { min-height: 18px; color:var(--muted); font-size:12px; margin-top: 8px; }
+  .footer-note { margin-top:16px; color:var(--muted); font-size:12px; line-height:1.6; }
+  .dark { --ink:#eef2ff; --muted:#aab5c9; --soft:#151a27; --paper:#111827; --line:#2c354a; --line-strong:#56627a; --accent:#9aa9eb; --accent-dark:#8192df; background:#0c111d; }
+  .dark body, body.dark { background: radial-gradient(circle at top left, rgba(154,169,235,.16), transparent 34rem), #0c111d; }
+  body.dark .hero, body.dark .card, body.dark .metric { background: rgba(17,24,39,.86); }
+  body.dark .prompt-box { background:#0f1625; }
+  @media (max-width: 980px) { .layout, .method-strip, .answer-grid { grid-template-columns: 1fr; } .toolbar { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .root { padding:18px 12px 36px; } .panel-grid, .ask-grid, .custom-row, .toolbar { grid-template-columns:1fr; } .topbar { align-items:flex-start; flex-direction:column; } }
+</style>
+</head>
+<body>
+<h1 class="sr-only">Overcomer Council OS</h1>
+<main class="root">
+  <div class="topbar">
+    <div class="brand"><div class="brand-mark">OC</div><span>Overcomer Council OS</span></div>
+    <button class="mode-pill" id="themeToggle" type="button">Toggle dark mode</button>
+  </div>
+
+  <section class="hero" aria-labelledby="heroTitle">
+    <p class="kicker">The Waiting Was the Cage</p>
+    <h2 class="title" id="heroTitle">A strategic adversity-to-leverage engine.</h2>
+    <p class="subtitle">Use public overcomer life arcs as analytical lenses, not impersonations, to convert instability, exclusion, and waiting into a tactical next move, a sharper offer, and a room you can build yourself.</p>
+    <div class="hero-actions">
+      <button class="btn primary" onclick="scrollToWorkbench()">Start the council</button>
+      <button class="btn" onclick="generateCouncil()">Generate full council prompt</button>
+      <button class="btn" onclick="exportMarkdown()">Export Markdown</button>
+    </div>
+  </section>
+
+  <section class="method-strip" aria-label="Method summary">
+    <article class="metric"><b>1. Lens</b><span>Select one public life arc or compare three strategic patterns.</span></article>
+    <article class="metric"><b>2. Question</b><span>Ask about leverage, money, shame, credibility, distribution, or coalition.</span></article>
+    <article class="metric"><b>3. Output</b><span>Generate a tactical prompt with hard truth, next move, and trap to avoid.</span></article>
+    <article class="metric"><b>4. Action</b><span>Copy, save, export, or send the prompt into your AI workspace.</span></article>
+  </section>
+
+  <section class="layout" id="workbench">
+    <aside class="card card-pad">
+      <h3 class="section-title">Council Members <span class="subtle" id="memberCount"></span></h3>
+      <div class="filters" id="filters"></div>
+      <div class="panel-grid" id="panelGrid"></div>
+    </aside>
+
+    <section class="workbench">
+      <div class="card card-pad">
+        <h3 class="section-title">Ask the council <span class="subtle" id="selectedName">Full council</span></h3>
+        <div class="notice">This tool generates advisory prompts. It does not claim these individuals are present, endorsing the work, or personally answering. The value is the strategic pattern, not impersonation.</div>
+        <div class="ask-grid" id="questionGrid" style="margin-top:12px"></div>
+        <div class="custom-row">
+          <input class="input" id="customQ" type="text" placeholder="Ask your own question..." />
+          <button class="btn accent" onclick="generateSelected()">Ask selected</button>
+        </div>
+        <div class="toolbar">
+          <button class="btn" onclick="generateCouncil()">Full council</button>
+          <button class="btn" onclick="generateCompare()">Compare selected</button>
+          <button class="btn" onclick="copyPrompt()">Copy prompt</button>
+          <button class="btn" onclick="resetApp()">Reset</button>
+        </div>
+        <p class="toast" id="toast"></p>
+      </div>
+
+      <div class="card card-pad">
+        <h3 class="section-title" id="answerTitle">Council Output</h3>
+        <div class="answer-grid" id="outputCards"></div>
+        <textarea class="prompt-box" id="promptBox" aria-label="Generated prompt"></textarea>
+      </div>
+
+      <div class="card card-pad">
+        <h3 class="section-title">Prompt History <span class="subtle">saved in this browser session</span></h3>
+        <div class="history-list" id="historyList"></div>
+      </div>
+    </section>
+  </section>
+
+  <p class="footer-note"><strong>Use case:</strong> This is designed for GitHub Pages, Claude Artifacts, internal strategy rooms, coaching prompts, and LinkedIn artifact demos. To turn it into a true AI app, connect the generated prompt to a backend endpoint that calls your preferred model API.</p>
+</main>
+
+<script>
+const mauriceContext = `Maurice (Erwin Maurice McDonald) is a 54-year-old Black American male, U.S. Army veteran, 20+ year enterprise technologist, and founder of Epoch Frameworks LLC. He is currently navigating housing instability and extended-stay hotel life after eviction, while rebuilding from employment instability after being laid off in July 2024. He has AI consulting projects, signed NDA exposure to a major digital marketing firm's billion-dollar AI roadmap, a silent backend engineering partner for large jobs, styling relationships through King Ranch, and early viral proof around styling/content. He is building behavioral intelligence and AI governance frameworks including EBT, MOC, WCIS, and DARE.`;
+
+const members = [
+  {
+    id: "shaka", initials: "SS", color: "#B5D4F4", textColor: "#0C447C",
+    name: "Shaka Senghor",
+    tag: "Incarceration, authorship, prison reform",
+    struggles: "Drug trade, murder conviction at 19, 19 years incarcerated, solitary confinement",
+    built: "Author, speaker, reform advocate, and national voice on redemption and justice",
+    answer: "I had to stop waiting for someone to see my humanity before I acted like I had value. In solitary, I started writing not because anyone asked me to, not because I had a publisher or a platform, but because the work itself was the proof. By the time the world was ready to receive me, I had already built something they could not ignore.",
+    lens: "identity reconstruction, credibility after stigma, writing as proof, disciplined self-definition"
+  },
+  {
+    id: "daymond", initials: "DJ", color: "#9FE1CB", textColor: "#085041",
+    name: "Daymond John",
+    tag: "Bootstrapping, brand, constraint strategy",
+    struggles: "Poverty, dyslexia, limited startup capital, early resource constraints",
+    built: "FUBU founder, investor, brand strategist, Shark Tank investor",
+    answer: "I stopped waiting for startup capital. I had $40 and my mother's sewing machine. FUBU started as a hat company because hats do not require much fabric. The constraint was not the enemy, it was the product strategy. Stop waiting for the right amount of resources and start extracting maximum leverage from exactly what you have today.",
+    lens: "productized scarcity, brand leverage, offer design, revenue before capital"
+  },
+  {
+    id: "gary", initials: "GH", color: "#F5C4B3", textColor: "#712B13",
+    name: "Gary Haugen",
+    tag: "Homelessness, addiction, institution building",
+    struggles: "Homelessness, addiction, institutional gatekeeping, lack of power-network access",
+    built: "Founder of International Justice Mission, lawyer, global anti-trafficking leader",
+    answer: "I had to stop waiting for permission from institutions that had every incentive to keep me out. I had no legal network, no family connections to power. What I had was a problem I understood from the inside that no one else was solving seriously. I stopped waiting for a credential to authorize me and let the quality of the work authorize me instead.",
+    lens: "institutional access, credibility under exclusion, mission architecture, problem ownership"
+  },
+  {
+    id: "halle", initials: "HB", color: "#F4C0D1", textColor: "#72243E",
+    name: "Halle Berry",
+    tag: "Homelessness, identity, performance career",
+    struggles: "Shelter life, unstable early career, resource scarcity, rooms not built for her",
+    built: "Academy Award-winning actor, producer, entrepreneur",
+    answer: "I stopped waiting to feel stable before I committed fully. I was eating at shelters and still showing up to auditions. The shelter was not a pause in my life, it was part of the journey. The moment I stopped treating my instability as something to be ashamed of and started treating it as evidence that I was already in motion, everything shifted.",
+    lens: "visibility under instability, shame reversal, showing up before stability, identity resilience"
+  },
+  {
+    id: "jakes", initials: "TJ", color: "#CECBF6", textColor: "#3C3489",
+    name: "T.D. Jakes",
+    tag: "Poverty, ministry, media enterprise",
+    struggles: "Poverty, family loss, small beginnings, limited infrastructure",
+    built: "Pastor, author, filmmaker, media and real estate entrepreneur",
+    answer: "I had to stop waiting for the right city, the right congregation, the right moment. I was preaching to a small group in West Virginia with no money and a broken infrastructure. I stopped waiting for scale and started building depth. When you go deep with a small group, scale finds you. Maurice, your frameworks are deep. Stop waiting for scale to validate what depth has already proven.",
+    lens: "community trust, narrative capital, depth before scale, platform building"
+  },
+  {
+    id: "fifty", initials: "50", color: "#C0DD97", textColor: "#3B6D11",
+    name: "Curtis '50 Cent' Jackson",
+    tag: "Street survival, rejection, distribution",
+    struggles: "Drug dealing, violence, being shot, label rejection, industry gatekeeping",
+    built: "Music, television, brand, investing, and distribution businesses",
+    answer: "I stopped waiting for the industry to let me back in after Columbia dropped me. I pressed 200,000 copies of Guess Who's Back myself and hit the streets. I created the demand before I had the deal. You do not wait for a platform to give you distribution. You build your own distribution until the platform comes to you asking for access.",
+    lens: "leverage, distribution, demand creation, power mapping, negotiation"
+  },
+  {
+    id: "leymah", initials: "LG", color: "#FAC775", textColor: "#633806",
+    name: "Leymah Gbowee",
+    tag: "War, displacement, coalition power",
+    struggles: "Civil war, domestic abuse, PTSD, single motherhood, displacement",
+    built: "Nobel Peace Prize-winning peace organizer and coalition builder",
+    answer: "I stopped waiting for men with power to solve what men with power had broken. I had no money, no title, no government backing. I had market women, church women, and Muslim women who were all exhausted by the same war. The coalition was the institution. Maurice, you do not need Anthropic or McKinsey to credential your frameworks. You need a coalition of people who already feel what you have named.",
+    lens: "coalition design, moral authority, movement building, power from the margins"
+  },
+  {
+    id: "rubin", initials: "RR", color: "#B5D4F4", textColor: "#185FA5",
+    name: "Rick Rubin",
+    tag: "Creative clarity, independent label, taste",
+    struggles: "No industry access, outsider status, depression, limited early infrastructure",
+    built: "Co-founder of Def Jam and influential producer across multiple genres",
+    answer: "I stopped waiting to be taken seriously by the industry I was trying to change. I was a college student with a dorm room and a drum machine. I did not ask for a meeting at a label, I built the label. The thing most people wait for, legitimacy, is actually downstream of action, not upstream. You do not get legitimate and then build. You build and legitimacy catches up.",
+    lens: "creative economy, taste as asset, stripping to essence, legitimacy through action"
+  },
+  {
+    id: "soledad", initials: "SO", color: "#F0997B", textColor: "#712B13",
+    name: "Soledad O'Brien",
+    tag: "Identity friction, independent media, narrative control",
+    struggles: "Identity gatekeeping, network constraints, institutional bias",
+    built: "Journalist, documentary producer, founder of Starfish Media Group",
+    answer: "I stopped waiting for a network to stop using my identity against me. Every time I tried to fit their box, I shrank. The moment I left and built Starfish Media on my own terms, I stopped needing their approval because I had my own infrastructure. Maurice, Epoch Frameworks is your Starfish. Stop waiting for an enterprise client to validate what you have already built. The validation is the build.",
+    lens: "independent infrastructure, narrative ownership, bias navigation, media credibility"
+  },
+  {
+    id: "kevin", initials: "KH", color: "#9FE1CB", textColor: "#0F6E56",
+    name: "Kevin Hart",
+    tag: "Work ethic, brand, repeated failure",
+    struggles: "Poverty, absent father, early bombing, public setbacks, instability",
+    built: "Comedy, production, fitness, media, and brand ecosystem",
+    answer: "I stopped waiting to stop being afraid. I was bombing on stages in Philadelphia and people were throwing things. I kept showing up not because I was not scared but because I realized the fear was the same size whether I went on stage or stayed home. You do not wait for the fear to go away. You build a work ethic so consistent that the fear becomes irrelevant.",
+    lens: "consistency, personal brand, discipline, repetition under fear, monetizing story"
+  }
+];
+
+const defaultQuestions = [
+  "What did you stop waiting for before your life started moving again?",
+  "What did you build before anyone gave you permission?",
+  "How do I turn instability into proof instead of shame?",
+  "What is the first small move that creates leverage this week?",
+  "How do I build my own room when institutions keep me outside?",
+  "What offer should I package from the work I already have?"
+];
+
+
+
+const lensGroups = [
+  { label: "All", keywords: [] },
+  { label: "Revenue", keywords: ["revenue", "offer", "brand", "capital", "product"] },
+  { label: "Identity", keywords: ["identity", "shame", "stigma", "bias"] },
+  { label: "Coalition", keywords: ["coalition", "community", "movement", "institution"] },
+  { label: "Distribution", keywords: ["distribution", "platform", "media", "demand"] },
+  { label: "Discipline", keywords: ["discipline", "consistency", "work ethic", "fear"] }
+];
+
+let selected = null;
+let compareIds = new Set();
+let activeFilter = "All";
+let lastPrompt = "";
+let history = [];
+
+function byId(id) { return document.getElementById(id); }
+function scrollToWorkbench() { byId("workbench").scrollIntoView({ behavior: "smooth", block: "start" }); }
+function currentQuestion() { return byId("customQ").value.trim() || defaultQuestions[0]; }
+function selectedCompareMembers() { return members.filter(m => compareIds.has(m.id)); }
+function memberMatches(m) {
+  if (activeFilter === "All") return true;
+  const group = lensGroups.find(g => g.label === activeFilter);
+  const hay = `${m.tag} ${m.lens} ${m.built} ${m.struggles}`.toLowerCase();
+  return group.keywords.some(k => hay.includes(k));
+}
+
+function renderFilters() {
+  byId("filters").innerHTML = lensGroups.map(g => `<button class="chip ${g.label === activeFilter ? 'active' : ''}" onclick="setFilter('${g.label}')">${g.label}</button>`).join("");
+}
+function setFilter(label) { activeFilter = label; renderFilters(); renderPanel(); }
+
+function renderPanel() {
+  const filtered = members.filter(memberMatches);
+  byId("memberCount").textContent = `${filtered.length} shown`;
+  byId("panelGrid").innerHTML = filtered.map(m => `
+    <button type="button" class="member-card ${selected && selected.id === m.id ? 'active' : ''} ${compareIds.has(m.id) ? 'compare' : ''}" onclick="selectMember('${m.id}')" oncontextmenu="event.preventDefault(); toggleCompare('${m.id}');">
+      <div class="member-top">
+        <div>
+          <div class="member-avatar" style="background:${m.color};color:${m.textColor}">${m.initials}</div>
+          <div class="member-name">${m.name}</div>
+          <div class="member-tag">${m.tag}</div>
+        </div>
+        <span class="compare-check" title="Right-click card or use Compare selected"></span>
+      </div>
+      <div class="member-lens">${m.lens}</div>
+    </button>
+  `).join("");
+}
+
+function selectMember(id) {
+  const m = members.find(x => x.id === id);
+  selected = m;
+  if (compareIds.has(id)) compareIds.delete(id); else if (compareIds.size < 3) compareIds.add(id);
+  byId("selectedName").textContent = m.name;
+  renderPanel();
+  generateSelected(false);
+}
+function toggleCompare(id) {
+  if (compareIds.has(id)) compareIds.delete(id); else if (compareIds.size < 3) compareIds.add(id); else toast("Compare mode allows up to three members.");
+  renderPanel();
+}
+
+function renderQuestions() {
+  const grid = byId("questionGrid");
+  grid.innerHTML = "";
+  defaultQuestions.forEach(q => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "q-btn";
+    btn.textContent = q;
+    btn.addEventListener("click", () => setQuestion(q));
+    grid.appendChild(btn);
+  });
+}
+function setQuestion(q) { byId("customQ").value = q; selected ? generateSelected(false) : generateCouncil(false); }
+
+function outputCards(type, m) {
+  const q = currentQuestion();
+  let cards;
+  if (type === "selected" && m) {
+    cards = [
+      ["Lens", m.name + " — " + m.lens.split(",")[0]],
+      ["Hard truth", "The waiting pattern is costing momentum more than the circumstance itself."],
+      ["Leverage point", m.built],
+      ["72-hour move", "Package one visible proof asset and send it to a real person with buying or convening power."],
+      ["Trap", "Do not confuse being unseen with being unready."]
+    ];
+  } else if (type === "compare") {
+    const names = selectedCompareMembers().map(x => x.name).join(" vs ");
+    cards = [
+      ["Compare", names || "Select up to three council members"],
+      ["Question", q],
+      ["Pattern", "Find the common move across different forms of exclusion."],
+      ["Output", "A blended tactical plan, not a motivational quote."],
+      ["Standard", "Revenue, visibility, credibility, and action must all be present."]
+    ];
+  } else {
+    cards = [
+      ["Verdict", "The waiting itself was the cage."],
+      ["Credential", "Treat the published body of work as proof."],
+      ["Scarcity", "Turn constraints into the entry offer."],
+      ["Room", "Convene the coalition before the institution invites you."],
+      ["Move", "Build, package, circulate, repeat."]
+    ];
+  }
+  byId("outputCards").innerHTML = cards.map(c => `<article class="output-card"><b>${c[0]}</b><span>${c[1]}</span></article>`).join("");
+}
+
+function buildSelectedPrompt() {
+  const q = currentQuestion();
+  if (!selected) return buildCouncilPrompt();
+  return `Use ${selected.name} as an analytical lens inside the Overcomer Council. Do not claim to be the real person and do not imply endorsement. Draw only from the public life arc, adversity pattern, and strategic lessons below.
+
+Council member: ${selected.name}
+Adversity pattern: ${selected.struggles}
+What they built: ${selected.built}
+Primary lens: ${selected.lens}
+Signature answer to the core question: ${selected.answer}
+
+${mauriceContext}
+
+Maurice's question: ${q}
+
+Respond as a direct, tactical advisor using this lens. Avoid platitudes. Give:
+1. the hard truth,
+2. the leverage point,
+3. the next 72-hour move,
+4. the trap to avoid,
+5. one sentence Maurice should repeat when the old waiting pattern returns.`;
+}
+
+function buildCouncilPrompt() {
+  const q = currentQuestion();
+  const roster = members.map(m => `- ${m.name}: ${m.lens}; signature answer: ${m.answer}`).join("\n");
+  return `Facilitate the Overcomer Council as an AI analysis panel. Do not claim these are the real people speaking and do not imply endorsement. Use each public life arc as a strategic lens.
+
+Core event frame: The Waiting Was the Cage.
+Core question: What did you stop waiting for, and what did you build before anyone gave you permission?
+
+${mauriceContext}
+
+Maurice's question to the full council: ${q}
+
+Council roster and strategic lenses:
+${roster}
+
+Output format:
+1. Start with the one-sentence council verdict.
+2. Give each member 2-3 tactical sentences.
+3. Synthesize the three moves Maurice should make this week.
+4. Identify the revenue offer hidden inside his current constraints.
+5. End with the line: The waiting itself was the cage.`;
+}
+
+function buildComparePrompt() {
+  const chosen = selectedCompareMembers();
+  if (chosen.length < 2) return "Select at least two council members to compare. Click cards to add them to compare mode.";
+  const q = currentQuestion();
+  const roster = chosen.map(m => `- ${m.name}
+  adversity: ${m.struggles}
+  built: ${m.built}
+  lens: ${m.lens}
+  signature answer: ${m.answer}`).join("\n\n");
+  return `Run a comparative Overcomer Council analysis using only the selected lenses below. Do not impersonate the real people and do not imply endorsement.
+
+${mauriceContext}
+
+Maurice's question: ${q}
+
+Selected lenses:
+${roster}
+
+Output format:
+1. Where the selected lenses agree.
+2. Where they would disagree tactically.
+3. The strongest combined move for the next 72 hours.
+4. The revenue offer hidden inside the constraint.
+5. The credibility asset Maurice should publish or send next.
+6. The exact sentence to use when pitching the offer.`;
+}
+
+function setPrompt(prompt, title, type, member) {
+  lastPrompt = prompt;
+  byId("promptBox").value = prompt;
+  byId("answerTitle").textContent = title;
+  outputCards(type, member);
+  saveHistory(title, prompt);
+}
+function generateSelected(save=true) {
+  if (!selected) { toast("Select a council member first, or use Full council."); return; }
+  setPrompt(buildSelectedPrompt(), `${selected.name} Lens Output`, "selected", selected);
+  if (save) toast("Selected lens prompt generated.");
+}
+function generateCouncil(save=true) {
+  selected = null;
+  byId("selectedName").textContent = "Full council";
+  renderPanel();
+  setPrompt(buildCouncilPrompt(), "Full Council Output", "council");
+  if (save) toast("Full council prompt generated.");
+}
+function generateCompare() {
+  const chosen = selectedCompareMembers();
+  if (chosen.length < 2) { toast("Select at least two members. Click cards to add them to compare mode."); return; }
+  setPrompt(buildComparePrompt(), "Compare Mode Output", "compare");
+  toast("Compare prompt generated.");
+}
+
+async function copyPrompt() {
+  const prompt = byId("promptBox").value || buildCouncilPrompt();
+  try { await navigator.clipboard.writeText(prompt); toast("Prompt copied."); }
+  catch(e) { byId("promptBox").select(); toast("Prompt selected. Press Ctrl+C to copy."); }
+}
+function exportMarkdown() {
+  const prompt = byId("promptBox").value || buildCouncilPrompt();
+  const content = [
+    "# " + byId("answerTitle").textContent,
+    "",
+    "**Question:** " + currentQuestion(),
+    "",
+    "## Generated Prompt",
+    "",
+    "```text",
+    prompt,
+    "```",
+    ""
+  ].join("\n");
+  const blob = new Blob([content], { type: "text/markdown" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "overcomer-council-prompt.md";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  toast("Markdown export created.");
+}
+function saveHistory(title, prompt) {
+  const item = { title, prompt, time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) };
+  history = [item, ...history.filter(h => h.prompt !== prompt)].slice(0, 8);
+  renderHistory();
+}
+function renderHistory() {
+  byId("historyList").innerHTML = history.length ? history.map((h, i) => `<button class="history-item" onclick="loadHistory(${i})"><b>${h.title}</b><span>${h.time} · ${h.prompt.slice(0, 125)}...</span></button>`).join("") : `<div class="notice">Generated prompts will appear here.</div>`;
+}
+function loadHistory(i) {
+  const h = history[i];
+  byId("promptBox").value = h.prompt;
+  byId("answerTitle").textContent = h.title;
+  lastPrompt = h.prompt;
+  toast("History item loaded.");
+}
+function resetApp() {
+  selected = null; compareIds.clear(); activeFilter = "All";
+  byId("customQ").value = defaultQuestions[0];
+  byId("selectedName").textContent = "Full council";
+  renderFilters(); renderPanel(); generateCouncil(false); toast("Reset complete.");
+}
+function toast(message) { byId("toast").textContent = message; }
+
+byId("themeToggle").addEventListener("click", () => document.body.classList.toggle("dark"));
+renderFilters();
+renderQuestions();
+renderHistory();
+byId("customQ").value = defaultQuestions[0];
+generateCouncil(false);
+</script>
+</body>
+</html>
